@@ -11,14 +11,17 @@ const User = require('./../models/User');
 const UserVerification = require('./../models/UserVerification');
 // mongoDB Password Reset model
 const PasswordReset = require('./../models/PasswordReset');
+// mongodb OTP Verification model
+const UserOTPVerification = require('../models/UserOTPVerification');
 
 require('dotenv').config();
 
 // Validation Middleware
 const { validateSignupInputs } = require('../middleware/signupvalidation');
 const { validateLoginInputs } = require('../middleware/loginvalidation');
+
 const { error } = require('console');
-const UserOTPVerification = require('../models/UserOTPVerification');
+
 
 let transporter = nodemailer.createTransport({
     service: "gmail",
