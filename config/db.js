@@ -1,6 +1,15 @@
-require('dotenv').config();
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-    console.log("DB Connected...");
-  }).catch(err => console.log(err));
+require('dotenv').config();
+
+const mongoURI = process.env.MONGO_URI;
+
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+
+mongoose.connection.on('connected', () => {
+  console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', (err) => {
+  console.error(`Mongoose connection error: ${err}`);
+});
