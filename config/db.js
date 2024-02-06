@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const mongoURI = process.env.MONGODB_URI;
 
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(mongoURI, { tls: true, tlsAllowInvalidHostnames: true });
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
