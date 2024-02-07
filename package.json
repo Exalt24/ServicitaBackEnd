@@ -1,11 +1,10 @@
 {
-  "name": "server",
+  "name": "index",
   "version": "1.0.0",
   "description": "Login System for Servicita",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon -r dotenv/config src/index.js dotenv_config_path=env/local.env"
   },
   "author": "Daniel Cruz",
   "license": "ISC",
@@ -14,7 +13,6 @@
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
-    "mailgen": "^2.0.28",
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
     "nodemailer": "^6.9.9",
