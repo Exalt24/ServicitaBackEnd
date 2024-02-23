@@ -3,10 +3,12 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
     name: String,
-    email: String,
+    email: {type: String, unique: true},
+    mobile: String,
     password: String,
     dateOfBirth: Date,
-    verified: Boolean
+    verified: Boolean,
+    userType: { type: String, enum: ['ServiceSeeker', 'ServiceProvider'] }
 });
 
 const User = mongoose.model('User', UserSchema);

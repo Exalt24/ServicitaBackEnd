@@ -2,20 +2,24 @@ const User = require('./model');
 const hashData = require('./../../util/hashData');
 const verifyHashedData = require('./../../util/verifyHashedData');
 
+
 const createNewUser = async (data) => {
     try {
-        const { name, email, password, dateOfBirth } = data;
+        const { name, email, mobile, password, dateOfBirth, userType } = data;
         const existingUser = await User.find({ email });
         if (existingUser.length) {
-           throw Error("Email is being used by another user.");
+            throw Error("Email is being used by another user.");
         } else {
             const hashedPassword = await hashData(password);
             const newUser = new User({
                 name,
                 email,
+                mobile,
                 password: hashedPassword,
                 dateOfBirth,
-                verified: false
+                verified: false,
+                admin: false,
+                userType
             });
             const createdUser = await newUser.save();
             return createdUser;
@@ -39,7 +43,7 @@ const authenticateUser = async (email, password) => {
                 const passwordMatch = await verifyHashedData(password, hashedPassword);
                 if (!passwordMatch) {
                     throw Error("Invalid password entered!");
-                } else {
+                } else {  
                     return fetchedUsers;
                 }
             }
