@@ -7,8 +7,7 @@ const UserSchema = new Schema({
     mobile: String,
     password: String,
     dateOfBirth: Date,
-    verified: Boolean,
-    userType: { type: String, enum: ['ServiceSeeker', 'ServiceProvider'] }
+    verified: Boolean
 });
 
 const User = mongoose.model('User', UserSchema);

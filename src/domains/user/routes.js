@@ -5,23 +5,22 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 // Custom Functions
 const { createNewUser, authenticateUser } = require('./controller');
-const { validateSignupInputs } = require('../../middleware/signupvalidation');
+// const { validateSignupInputs } = require('../../middleware/signupvalidation');
 const { sendOTPVerificationEmail } = require('./../email_verification_otp/controller')
-const { validateLoginInputs } = require('../../middleware/loginvalidation');
+// const { validateLoginInputs } = require('../../middleware/loginvalidation');
 const { sendVerificationEmail } = require('../email_verification/controller');
 const User = require('./model');
 
 // Signup
-router.post('/signup', validateSignupInputs, async (req, res) => {
+router.post('/signup', async (req, res) => {
     try {
-        const { name, email, mobile, password, dateOfBirth, userType } = req.body;
+        const { name, email, mobile, password, dateOfBirth} = req.body;
         const newUser = await createNewUser({
             name,
             email,
             mobile,
             password,
             dateOfBirth,
-            userType
         });
         const emailData = await sendVerificationEmail(newUser);
         // const emailData = await sendOTPVerificationEmail(newUser);
@@ -39,7 +38,7 @@ router.post('/signup', validateSignupInputs, async (req, res) => {
 });
 
 // For Logging In
-router.post('/login', validateLoginInputs, async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const authenticatedUser = await authenticateUser(email, password);

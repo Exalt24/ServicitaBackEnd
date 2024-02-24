@@ -5,7 +5,7 @@ const verifyHashedData = require('./../../util/verifyHashedData');
 
 const createNewUser = async (data) => {
     try {
-        const { name, email, mobile, password, dateOfBirth, userType } = data;
+        const { name, email, mobile, password, dateOfBirth} = data;
         const existingUser = await User.find({ email });
         if (existingUser.length) {
             throw Error("Email is being used by another user.");
@@ -18,8 +18,6 @@ const createNewUser = async (data) => {
                 password: hashedPassword,
                 dateOfBirth,
                 verified: false,
-                admin: false,
-                userType
             });
             const createdUser = await newUser.save();
             return createdUser;
