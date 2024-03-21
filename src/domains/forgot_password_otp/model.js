@@ -5,7 +5,8 @@ const PasswordResetOTPSchema = new Schema({
     userId: String,
     otp: String,
     createdAt: Date,
-    expiresAt: Date
+    expiresAt: Date,
+    expiresAfter: Date
 });
 
 const PasswordResetOTP = mongoose.model('PasswordResetOTP', PasswordResetOTPSchema);

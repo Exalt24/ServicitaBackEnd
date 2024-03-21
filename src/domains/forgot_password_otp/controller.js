@@ -1,5 +1,5 @@
 const PasswordResetOTP = require('./model');
-const User = require('./../user/model');
+const { User, TempUser } = require('./../user/model');
 const hashData = require('./../../util/hashData');
 const sendEmail = require('./../../util/sendEmail');
 const generateOTP = require('./../../util/generateOTP');
@@ -31,7 +31,7 @@ const sendOTPPasswordResetEmail = async ( {_id, email }) => {
             to: email,
             subject: "Password Reset Request",
             html: `<p>We heard that you lost your password.</p>
-            <p>This code <b>expires in 30 minutes</b>.</p>
+            <p>This code <b>expires in 5 minutes</b>.</p>
             <p>Enter <b>${otp}</b> in the app to change your password and complete the process.`
         }
         // Hash the OTP
@@ -40,7 +40,8 @@ const sendOTPPasswordResetEmail = async ( {_id, email }) => {
             userId: _id,
             otp: hashedOTP,
             createdAt: Date.now(),
-            expiresAt: Date.now() + 1800000
+            expiresAt: Date.now() + 5 * 60 * 1000,
+            expiresAfter: new Date(Date.now() + 5 * 60 * 1000)
         });
         await newOTPPasswordReset.save();
         await sendEmail(mailOptions);
