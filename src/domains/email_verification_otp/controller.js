@@ -4,6 +4,10 @@ const hashData = require('./../../util/hashData');
 const sendEmail = require('../../util/sendEmail');
 
 const sendOTPVerificationEmail = async ({ _id, email }) => {
+    if (!_id || !email) {
+        throw new Error("Missing required parameters for sending verification email.");
+    }
+    
     try {
         const otp = await generateOTP();
         const mailOptions = {
@@ -24,6 +28,7 @@ const sendOTPVerificationEmail = async ({ _id, email }) => {
         });
         await newOTPVerification.save();
         await sendEmail(mailOptions);
+        console.log("Verification email sent to:", email);
         return {
             userId: _id,
             email

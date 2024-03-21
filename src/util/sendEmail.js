@@ -12,7 +12,6 @@ transporter.verify((error, success) => {
     if(error){
         console.error(error);
     } else {
-        console.log("Ready for messages");
         console.log(success);
     }
 });

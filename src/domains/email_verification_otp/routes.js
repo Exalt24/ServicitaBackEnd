@@ -39,7 +39,7 @@ router.post("/verifyOTP", async (req, res) => {
             }
         }   
     } catch (error) {
-        return res.status(400).json({ status: "FAILED", message: error.message });
+        res.status(400).json({ status: "FAILED", message: error.message });
     }
 });
 
@@ -79,7 +79,6 @@ router.get("/getRemainingCurrentTime/:userId", async (req, res) => {
         }
     } catch (error) {
         res.status(400).json({ status: "FAILED", message: `Error getting remaining time: ${error.message}` });
-        console.log("Error getting remaining time: ", error.message);
     }
 });
 

@@ -34,7 +34,6 @@ const sendOTPPasswordResetEmail = async ( {_id, email }) => {
             <p>This code <b>expires in 5 minutes</b>.</p>
             <p>Enter <b>${otp}</b> in the app to change your password and complete the process.`
         }
-        // Hash the OTP
         const hashedOTP = await hashData(otp);
         const newOTPPasswordReset = await new PasswordResetOTP({
             userId: _id,

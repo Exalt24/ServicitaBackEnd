@@ -6,22 +6,19 @@ const PasswordResetOTP = require('./model');
 const { User, TempUser } = require('../user/model');
 const hashData = require('../../util/hashData');
 
-// For Requesting Password Reset
 router.post("/request", async (req, res) => {
     try {
-        const { email } = req.body
-        
-        if (!email) throw Error ("Empty credentials are not allowed.");
+        if (!email) {
+            throw new Error("Please provide a valid email address.");
+        }
         const emailData = await requestOTPPasswordReset(email);
         res.status(202).json({ status: "PENDING", message: "Password Reset OTP Email Sent.", data: emailData });
 
 ;   } catch (error) {
-        console.log("Error: ", error.message);
         res.status(400).json({ status: "FAILED", message: error.message});
     }
 });
 
-// For Actual Password Reset
 router.post("/reset", async (req, res) => {
     try {
         let { userId, otp, newPassword } = req.body;
@@ -39,11 +36,9 @@ router.post("/reset", async (req, res) => {
             const hashedOTP = resetRecord[0].otp;
     
             if (expiresAt < Date.now()) {
-                // Password reset link has expired
                 await PasswordResetOTP.deleteOne({ userId });
                 throw Error("Password reset link has expired.");
             }
-            // Compare provided hashedOTP with stored hashedOTP
             const isOTPValid = await verifyHashedData(otp, hashedOTP);
     
             if (!isOTPValid) {
@@ -86,7 +81,7 @@ router.post("/resendOTPPasswordReset", async (req, res) => {
             res.status(202).json({ status: "PENDING", message: "OTP Verification Resent", data: verifyOTPData });
         }
     } catch (error) {
-        return res.status(400).json({ status: "FAILED", message: error.message });
+        res.status(400).json({ status: "FAILED", message: error.message });
     }
 })
 

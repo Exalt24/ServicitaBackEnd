@@ -5,6 +5,11 @@ const verifyHashedData = require('./../../util/verifyHashedData');
 const createNewUser = async (data) => {
     try {
         const { email, mobile, password, role, verified } = data;
+
+        if (!email || !mobile || !password || !role) {
+            throw new Error("Missing required parameters for user creation.");
+        }
+
         const [existingUserByEmail, existingUserByMobile] = await Promise.all([
             User.findOne({ email }),
             User.findOne({ mobile })
@@ -26,16 +31,18 @@ const createNewUser = async (data) => {
                 expiresAfter: new Date(Date.now() + 24 * 60 * 60 * 1000)
             });
             const createdUser = await newUser.save();
+            console.log("User created: ", createdUser);
             return createdUser;
         }
     } catch (error) {
-        console.error(error);
+        console.error("Error creating user:", error);
         throw error;
     }
 }
 
 const addTempUser = async (data) => {
     try {
+        
         const { userId, name, address, birthDate, service } = data;
         const newTempUser = new TempUser({
             userId,

@@ -140,16 +140,23 @@ router.post('/loginOther', async (req, res) => {
 router.post('/loginUsingMobile', async (req, res) => {
     try {
         const { mobile } = req.body;
-        const userDetails = User.findOne({ mobile: mobile });
+        const userDetails = await User.findOne({ mobile: mobile });
+        if (!userDetails) {
+            throw new Error("User not found");
+        }
         console.log(userDetails)
         const authenticatedUser = await authenticateUserWithoutPass(userDetails.email);
         console.log(authenticatedUser)
-        const token = jwt.sign({ email: authenticatedUser[0].email }, JWT_SECRET, { expiresIn: '1h' });
-        res.status(200).json({
-            status: "SUCCESS",
-            message: "Login Successful",
-            data: token
-        })
+        if (authenticatedUser && authenticatedUser.length > 0 && authenticatedUser[0].email) {
+            const token = jwt.sign({ email: authenticatedUser[0].email }, JWT_SECRET, { expiresIn: '1h' });
+            res.status(200).json({
+                status: "SUCCESS",
+                message: "Login Successful",
+                data: token
+            });
+        } else {
+            throw new Error("Authentication failed");
+        }
     } catch (error) {
         res.status(400).json({
             status: "FAILED",
@@ -176,9 +183,9 @@ router.post('/userdata', async (req, res) => {
             status: "FAILED",
             message: error.message
         });
-        console.log(error)
     }
 })
+
 router.post('/getuserid', async (req, res) => {
     try {
         const { email } = req.body;
@@ -196,33 +203,12 @@ router.post('/getuserid', async (req, res) => {
             });
         }
     } catch (error) {
-        console.error("Error fetching user:", error);
         res.status(500).json({
             status: "FAILED",
             message: "Internal server error"
         });
     }
 });
-
-
-// router.post('/updatedata', async (req, res) => {
-//     try {
-//         const { userId, name } = req.body;
-//         User.findOneAndUpdate({ _id: userId }, { name: name }).then(data => {
-//             res.status(200).json({
-//                 status: "SUCCESS",
-//                 message: "Data Updated",
-//                 data: data
-//         })
-//         });
-//     } catch (error) {
-//         res.status(400).json({
-//             status: "FAILED",
-//             message: error.message
-//         });
-//         console.log(error)
-//     } 
-// })
 
 router.post('/updateemail', async (req, res) => {
     try {
@@ -277,7 +263,6 @@ router.post('/updatepassword', async (req, res) => {
             status: "FAILED",
             message: error.message
         });
-        console.log(error)
     }
 })
     
@@ -328,7 +313,6 @@ router.post('/checkIfEmailExists', async (req, res) => {
             status: "FAILED",
             message: error.message
         });
-        console.log(error)
     }
 })
 
