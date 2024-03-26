@@ -4,78 +4,82 @@ const verifyHashedData = require('./../../util/verifyHashedData');
 
 const createNewUser = async (data) => {
     try {
-        const { email, mobile, password, role, verified } = data;
-
+        const { email, mobile, password, role} = data;
         if (!email || !mobile || !password || !role) {
             throw new Error("Missing required parameters for user creation.");
         }
-
-        const [existingUserByEmail, existingUserByMobile] = await Promise.all([
-            User.findOne({ email }),
-            User.findOne({ mobile })
-        ]);
-        if (existingUserByEmail && !existingUserByEmail.verified.email) {
-            throw new Error("Email has been registered but not verified yet. Please verify your email.");
-        } else if (existingUserByEmail && existingUserByEmail.verified.email) {
-            throw new Error("Email is being used by another user.");
-        } else if (existingUserByMobile && existingUserByMobile.verified.mobile) {
-            throw new Error("Mobile number is being used by another user.");
-        } else {
-            const hashedPassword = await hashData(password);
-            const newUser = new User({
-                email,
-                mobile,
-                password: hashedPassword,
-                role,
-                verified: verified || { email: false, mobile: false },
-                expiresAfter: new Date(Date.now() + 24 * 60 * 60 * 1000)
-            });
-            const createdUser = await newUser.save();
-            console.log("User created: ", createdUser);
-            return createdUser;
-        }
+        const hashedPassword = await hashData(password);
+        const newUser = new User({
+            email,
+            mobile,
+            password: hashedPassword,
+            role,
+        });
+        const createdUser = await newUser.save();
+        await TempUser.deleteOne({ email: email });
+        return createdUser;
     } catch (error) {
-        console.error("Error creating user:", error);
         throw error;
     }
 }
 
 const addTempUser = async (data) => {
     try {
-        
-        const { userId, name, address, birthDate, service } = data;
-        const newTempUser = new TempUser({
-            userId,
-            name,
-            address,
-            birthDate,
-            service: service || '',
-            expiresAfter: new Date(Date.now() + 24 * 60 * 60 * 1000)
-        });
-        const createdTempUser = await newTempUser.save();
-        return createdTempUser;
+        const { email, mobile, password, role, name, address, birthDate, service } = data;
+        if (!email || !mobile || !password || !name || !address || !birthDate){
+            throw new Error("Missing required parameters for temporary user creation.");
+        }
+        const existingTempUserByEmail = await TempUser.findOne({ email });
+        const existingTempUserByMobile = await TempUser.findOne({ mobile });
+        const existingUserByEmail = await User.findOne({ email });
+        const existingUserByMobile = await User.findOne({ mobile });
+        if (existingTempUserByEmail) {
+            throw new Error("Temporary user already exists with the given email.");
+        } else if (existingTempUserByMobile) {
+            throw new Error("Temporary user already exists with the given mobile number.");
+        } else if (existingUserByEmail) {
+            throw new Error("User already exists with the given email.");
+        } else if (existingUserByMobile) {
+            throw new Error("User already exists with the given mobile number.");
+        } else {
+            const newTempUser = new TempUser({
+                email,
+                mobile,
+                password,
+                role,
+                name,
+                address,
+                birthDate,
+                service: service || [],
+                expiresAfter: new Date(Date.now() + 24 * 60 * 60 * 1000)
+            });
+            const createdTempUser = await newTempUser.save();
+            return createdTempUser;
+        }
     } catch (error) {
-        console.error(error);
         throw error;
     }
 }
 
 const authenticateUser = async (email, password) => {
     try {
-        const fetchedUsers = await User.find({ email });
-        if (!fetchedUsers.length) {
-            throw Error("Invalid credentials entered!");
+        if (!email || !password) {
+            throw new Error("Missing required parameters for user authentication.");
+        }
+        const fetchedTempUser = await TempUser.findOne({ email, password });
+        if (fetchedTempUser) {
+            throw new Error("User has not completed the registration process yet.");
+        }
+        const fetchedUser = await User.findOne({ email });
+        if (!fetchedUser) {
+            throw new Error("Invalid credentials entered!");
         } else {
-            const hashedPassword = fetchedUsers[0].password;
+            const hashedPassword = fetchedUser.password;
             const passwordMatch = await verifyHashedData(password, hashedPassword);
             if (!passwordMatch) {
-                throw Error("Invalid password entered!");
+                throw new Error("Invalid password entered!");
             } else {
-                if (!fetchedUsers[0].verified.email) {
-                    throw Error("Email has not been verified yet.");
-                } else {
-                    return fetchedUsers;
-                }
+                return fetchedUser;
             }
         }
     } catch (error) {
@@ -85,15 +89,18 @@ const authenticateUser = async (email, password) => {
 
 const authenticateUserWithoutPass = async (email) => {
     try {
-        const fetchedUsers = await User.find({ email });
-        if (!fetchedUsers.length) {
-            throw Error("Invalid credentials entered!");
+        if (!email) {
+            throw new Error("Missing required parameters for user authentication.");
+        }
+        const fetchedTempUser = await TempUser.findOne({ email });
+        if (fetchedTempUser) {
+            throw new Error("User has not completed the registration process yet.");
+        }
+        const fetchedUser = await User.findOne({ email });
+        if (!fetchedUser) {
+            throw new Error("Invalid credentials entered!");
         } else {
-            if (!fetchedUsers[0].verified.email) {
-                throw Error("Email has not been verified yet.");
-            } else { 
-                return fetchedUsers;
-            }
+            return fetchedUser;
         }
     } catch (error) {
         throw error;
@@ -102,19 +109,119 @@ const authenticateUserWithoutPass = async (email) => {
 
 const authenticateUserWithNumber = async (mobile) => {
     try {
-        const fetchedUsers = await User.find({ mobile });
-        if (!fetchedUsers.length) {
-            throw Error("Invalid credentials entered!");
+        if (!mobile) {
+            throw new Error("Missing required parameters for user authentication.");
+        }
+        const fetchedTempUser = await TempUser.findOne({ mobile });
+        if (fetchedTempUser) {
+            throw new Error("User has not completed the registration process yet.");
+        }
+        const fetchedUser = await User.findOne({ mobile });
+        if (!fetchedUser) {
+            throw new Error("No user found with the given mobile number!");
         } else {
-            if (!fetchedUsers[0].verified.mobile) {
-                throw Error("Mobile number has not been verified yet.");
-            } else { 
-                return fetchedUsers;
-            }
+            return fetchedUser;
         }
     } catch (error) {
         throw error;
     }
 }
 
-module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser};
+const getDetails = async (email) => {
+    try {
+        if (!email) {
+            throw new Error("Missing required parameters for getting temporary user details.");
+        }
+        const tempUser = await TempUser.findOne({ email });
+        const user = await User.findOne({ email })
+        if (!tempUser && !user) {
+            throw new Error("No user found with the given email.");
+        } else if (tempUser) {
+            return { data: tempUser, type: "temp" };
+        } else {
+            return { data: user, type: "permanent" };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getDetailsByMobile = async (mobile) => {
+    try {
+        if (!mobile) {
+            throw new Error("Missing required parameters for getting temporary user details.");
+        }
+        const tempUser = await TempUser.findOne({ mobile });
+        const user = await User.findOne({ mobile });
+        if (tempUser || user) {
+            throw new Error("User found with the given number.");
+        }
+        if (!tempUser && !user) {
+            return { type: "not found" };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getActualDetailsByMobile = async (mobile) => {
+    try {
+        if (!mobile) {
+            throw new Error("Missing required parameters for getting temporary user details.");
+        }
+        const user = await User.findOne({ mobile });
+        if (!user) {
+            throw new Error("No user found with the given mobile number.");
+        } else {
+            return user;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+const updateDetail = async (userId, updateType, updateValue) => {
+    try {
+        if (!userId || !updateType || !updateValue) {
+            throw new Error("Missing required parameters for updating user details.");
+        }
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            throw new Error("No user found with the given ID.");
+        } else {
+            if (updateType === "email") {
+                await User.updateOne({ _id: userId }, { email: updateValue });
+            } else if (updateType === "mobile") {
+                await User.updateOne({ _id: userId }, { mobile: updateValue });
+            } else if (updateType === "password") {
+                const hashedPassword = await hashData(updateValue);
+                await User.updateOne({ _id: userId }, { password: hashedPassword });
+            } else {
+                throw new Error("Invalid update type.");
+            }
+            return { userId, updateType, updateValue };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+const updateTempUserNumber = async (email, mobile) => {
+    try {
+        if (!email || !mobile) {
+            throw new Error("Missing required parameters for updating temporary user details.");
+        }
+        const tempUser = await TempUser.findOne({ email });
+        if (!tempUser) {
+            throw new Error("No temporary user found with the given email.");
+
+        } else {
+            await TempUser.updateOne({ email }, { mobile });
+            return { email, mobile };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile}

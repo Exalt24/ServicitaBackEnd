@@ -1,16 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { requestOTPPasswordReset, sendOTPPasswordResetEmail} = require('./controller');
-const verifyHashedData = require('../../util/verifyHashedData');
+const { requestOTPPasswordReset, verifyOTP, changePassword, getTime} = require('./controller');
 const PasswordResetOTP = require('./model');
-const { User, TempUser } = require('../user/model');
-const hashData = require('../../util/hashData');
 
 router.post("/request", async (req, res) => {
     try {
-        if (!email) {
-            throw new Error("Please provide a valid email address.");
-        }
+        let { email } = req.body;
         const emailData = await requestOTPPasswordReset(email);
         res.status(202).json({ status: "PENDING", message: "Password Reset OTP Email Sent.", data: emailData });
 
@@ -21,92 +16,32 @@ router.post("/request", async (req, res) => {
 
 router.post("/reset", async (req, res) => {
     try {
-        let { userId, otp, newPassword } = req.body;
-
-        if (!userId || !otp || !newPassword) {
-            throw Error("Invalid parameters for password reset.");
-        }
-
-        const resetRecord = await PasswordResetOTP.find({ userId });
-
-        if (resetRecord.length <= 0) {
-            throw Error("Password Reset Request not found.");
-        } else {
-            const { expiresAt } = resetRecord[0];
-            const hashedOTP = resetRecord[0].otp;
-    
-            if (expiresAt < Date.now()) {
-                await PasswordResetOTP.deleteOne({ userId });
-                throw Error("Password reset link has expired.");
-            }
-            const isOTPValid = await verifyHashedData(otp, hashedOTP);
-    
-            if (!isOTPValid) {
-                throw Error("Invalid code passed.");
-            } else {
-                const hashedNewPassword = await hashData(newPassword);
-                await User.updateOne({ _id: userId }, { password: hashedNewPassword });
-                await PasswordResetOTP.deleteOne({ userId });
-                res.status(200).json({ status: "SUCCESS", message: "OTP Verification Successful"});
-            }  
-        }
+        let { email, otp } = req.body;
+        const result = await verifyOTP(email, otp);
+        res.status(200).json({ status: "SUCCESS", message: "OTP Verification Successful", data: result});
     } catch (error) {
         res.status(400).json({ status: "FAILED", message: error.message});
     }
 });
 
-router.post("/actualReset", async (req, res) => {
+router.patch("/actualReset", async (req, res) => {
     try {
-        let { userId, newPassword } = req.body;
-        if (!userId || !newPassword) {
-            throw Error("Invalid parameters for password reset.");
-        }
-        const hashedNewPassword = await hashData(newPassword);
-        await User.updateOne({ _id: userId }, { password: hashedNewPassword });
-        res.status(200).json({ status: "SUCCESS", message: "Password Reset Successful"});
+        let { email, newPassword } = req.body;
+        const result = await changePassword(email, newPassword);
+        res.status(200).json({ status: "SUCCESS", message: "Password Reset Successful", data: result});
        
     } catch (error) {
         res.status(400).json({ status: "FAILED", message: error.message});
     }
 })
 
-router.post("/resendOTPPasswordReset", async (req, res) => {
+router.get("/getRemainingCurrentTime/:email", async (req, res) => {
     try {
-        let { userId, email } = req.body;
-        if ( !userId || !email ) {
-            throw Error("Empty user details are not allowed");
-        } else {
-            await PasswordResetOTP.deleteMany({ userId });
-            sendOTPPasswordResetEmail({ _id: userId, email }, res);
-            res.status(202).json({ status: "PENDING", message: "OTP Verification Resent", data: verifyOTPData });
-        }
-    } catch (error) {
-        res.status(400).json({ status: "FAILED", message: error.message });
-    }
-})
-
-router.get("/getRemainingCurrentTime/:userId", async (req, res) => {
-    try {
-        let { userId } = req.params;
-        if (!userId) {
-            throw new Error("Missing userId parameter");
-        } else {
-            const PasswordOTPVerificationRecords = await PasswordResetOTP.find({ userId });
-            if (PasswordOTPVerificationRecords.length <= 0) {
-                throw Error(
-                    "Account record doesn't exist or has been verified already."
-                )
-            } else {
-                const { expiresAt } = PasswordOTPVerificationRecords[0];
-                const currentTime = new Date();
-                const remainingTime = expiresAt - currentTime;
-                console.log("Remaining Time: ", remainingTime);
-                res.status(200).json({ remainingTime });
-            }
-        }
+        let { email } = req.params;
+        const result = await getTime(email);
+        res.status(200).json({ status: "SUCCESS", message: "Remaining time for OTP", remainingTime: result});
     } catch (error) {
         res.status(400).json({ status: "FAILED", message: `Error getting remaining time: ${error.message}` });
-        console.log("Error getting remaining time: ", error.message);
     }
 });
 

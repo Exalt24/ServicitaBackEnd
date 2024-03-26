@@ -3,28 +3,49 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
     email: {type: String, unique: true},
-    mobile: String,
+    mobile: {type: String, unique: true},
     password: String,
     role: {
         type: String,
         enum: ['Seeker', 'Provider'],
-    },
-    verified: {
-        email: {type: Boolean },
-        mobile: {type: Boolean }
-    },
-    expiresAfter: Date,
+    }
 });
 
 const User = mongoose.model('User', UserSchema);
 
 const TempUserDetailsSchema = new Schema({
-    userId: String,
-    name: String,
-    address: String,
+    email: {type: String, unique: true},
+    mobile: {type: String, unique: true},
+    password: String,
+    role: {
+        type: String,
+        enum: ['Seeker', 'Provider'],
+    },
+    name: {
+        firstName: String,
+        lastName: String
+    },
+    address: {
+        streetAddress1: String,
+        streetAddress2: String,
+        cityMunicipality: String,
+        barangay: String
+    },
     birthDate: Date,
+    service: {
+        serviceId: { type: String, unique: true },
+        type: String,
+        name: String,
+        description: String,
+        price: Number,
+        availability: [{
+            day: String,
+            startTime: String,
+            endTime: String
+        }],
+        default: []
+    },
     expiresAfter: Date,
-    service: String,
 });
 
 const TempUser = mongoose.model('TempUser', TempUserDetailsSchema);

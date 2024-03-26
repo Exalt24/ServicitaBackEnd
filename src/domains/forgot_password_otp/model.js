@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PasswordResetOTPSchema = new Schema({
-    userId: String,
+    email: String,
     otp: String,
     createdAt: Date,
     expiresAt: Date,
