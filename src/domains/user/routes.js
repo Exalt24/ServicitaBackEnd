@@ -20,7 +20,7 @@ router.post('/signup', async (req, res) => {
             status: "SUCCESS",
             message: "Details Saved Successfully",
             data: newUser
-        });
+        }); 
     } catch (error) {
         res.status(400).json({
             status: "FAILED",
@@ -32,7 +32,7 @@ router.post('/signup', async (req, res) => {
 
 router.post('/addTempDetails', async (req, res) => {
     try{
-        const { email, mobile, password, role, name, address, birthDate, service } = req.body;
+        const { email, mobile, password, role, name, address, birthDate, services } = req.body;
         const newTempUser = await addTempUser({ 
             email,
             mobile,
@@ -41,7 +41,7 @@ router.post('/addTempDetails', async (req, res) => {
             name, 
             address, 
             birthDate,
-            service
+            services
         });
         res.status(200).json({
             status: "SUCCESS",
@@ -49,6 +49,7 @@ router.post('/addTempDetails', async (req, res) => {
             data: newTempUser
         });
     } catch (error) {
+        console.log(error)
         res.status(400).json({
             status: "FAILED",
             message: error.message
@@ -72,6 +73,7 @@ router.post('/getTempDetails', async (req, res) => {
             status: "FAILED",
             message: error.message
         });
+        console.error(error);
     }
 })
 
@@ -99,7 +101,7 @@ router.post('/loginOther', async (req, res) => {
     try {
         const { email } = req.body;
         const authenticatedUser = await authenticateUserWithoutPass(email);
-        const token = jwt.sign({ email: authenticatedUser[0].email }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email: authenticatedUser.email }, JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({
             status: "SUCCESS",
             message: "Login Successful",
@@ -119,7 +121,7 @@ router.post('/loginUsingMobile', async (req, res) => {
         const { mobile } = req.body;
         const userDetails = await authenticateUserWithNumber(mobile);
         const authenticatedUser = await authenticateUserWithoutPass(userDetails.email);
-        const token = jwt.sign({ email: authenticatedUser[0].email }, JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ email: authenticatedUser.email }, JWT_SECRET, { expiresIn: '1h' });
         res.status(200).json({
             status: "SUCCESS",
             message: "Login Successful",
@@ -221,7 +223,7 @@ router.patch('/updateDetail', async (req, res) => {
     try {
         const { userId, updateType, updateValue } = req.body;
         const updatedUser = await updateDetail(userId, updateType, updateValue);
-        res.status(200).json({ status: "SUCCESS", message: "Email Updated", data: updatedUser});
+        res.status(200).json({ status: "SUCCESS", message: "Details Updated", data: updatedUser});
     } catch (error) {
         res.status(400).json({
             status: "FAILED",

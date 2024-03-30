@@ -25,7 +25,7 @@ const createNewUser = async (data) => {
 
 const addTempUser = async (data) => {
     try {
-        const { email, mobile, password, role, name, address, birthDate, service } = data;
+        const { email, mobile, password, role, name, address, birthDate, services } = data;
         if (!email || !mobile || !password || !name || !address || !birthDate){
             throw new Error("Missing required parameters for temporary user creation.");
         }
@@ -50,7 +50,7 @@ const addTempUser = async (data) => {
                 name,
                 address,
                 birthDate,
-                service: service || [],
+                services: services || [],
                 expiresAfter: new Date(Date.now() + 24 * 60 * 60 * 1000)
             });
             const createdTempUser = await newTempUser.save();

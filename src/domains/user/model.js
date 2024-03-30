@@ -8,7 +8,11 @@ const UserSchema = new Schema({
     role: {
         type: String,
         enum: ['Seeker', 'Provider'],
-    }
+    },
+    suspension: {
+        isSuspended: Boolean,
+        expiresAt: Date,
+    },
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -32,19 +36,22 @@ const TempUserDetailsSchema = new Schema({
         barangay: String
     },
     birthDate: Date,
-    service: {
+    services: [{
         serviceId: { type: String, unique: true },
-        type: String,
+        serviceType: String,
         name: String,
         description: String,
-        price: Number,
+        price: {
+            min: Number,
+            max: Number,
+        },
         availability: [{
             day: String,
             startTime: String,
-            endTime: String
-        }],
-        default: []
-    },
+            endTime: String,
+            flagAvailable: Boolean
+        }]
+    }],
     expiresAfter: Date,
 });
 

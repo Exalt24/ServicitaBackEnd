@@ -1,8 +1,6 @@
 const express = require('express');
 const router = express.Router();
 
-const Service = require('./model');
-
 const { addNewService, deleteService, getServices } = require('./controller');
 
 
