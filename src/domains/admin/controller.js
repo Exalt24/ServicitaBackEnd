@@ -1,16 +1,22 @@
 const  { User } = require('./../user/model');
 const Admin = require('./model');
+const verifyHashedData = require('./../../util/verifyHashedData');
 
 const login = async (username, password) => {
     try {
         if (!username || !password) {
             throw new Error('Username and password are required');
         }
-        const admin = await Admin.findOne({username, password});
+        const admin = await Admin.findOne({userName: username});
         if(!admin){
-            throw new Error('Invalid username or password');
+            throw new Error('Invalid credentials');
         } else {
-            return admin;
+            const isPasswordValid = await verifyHashedData(password, admin.password);
+            if(!isPasswordValid){
+                throw new Error('Invalid password');
+            } else {
+                return admin;
+            }
         }
     } catch (error) {
         throw error;
@@ -92,6 +98,8 @@ const unsuspendUser = async (email) => {
             isSuspended: false,
             expiresAt: null
         };
+
+        await user.save();
     }
     catch (error) {
         throw error;

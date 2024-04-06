@@ -9,6 +9,7 @@ const UserSchema = new Schema({
         type: String,
         enum: ['Seeker', 'Provider'],
     },
+    profileImage: String,
     suspension: {
         isSuspended: Boolean,
         expiresAt: Date,

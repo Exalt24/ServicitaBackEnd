@@ -4,17 +4,18 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile } = require('./controller');
+const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage } = require('./controller');
 
 router.post('/signup', async (req, res) => {
     try {
-        const { email, mobile, password, role } = req.body;
-        console.log(email, mobile, password, role)
+        const { email, mobile, password, role, profileImage} = req.body;
+        console.log(email, mobile, password, role, profileImage)
         const newUser = await createNewUser({
             email,
             mobile,
             password,
-            role
+            role,
+            profileImage
         });
         res.status(200).json({
             status: "SUCCESS",
@@ -238,6 +239,19 @@ router.patch('/updateTempNumber', async (req, res) => {
         const updatedUser = await updateTempUserNumber(email, mobile);
         res.status(200).json({ status: "SUCCESS", message: "Mobile Number Updated", data: updatedUser});
         console.log(updatedUser)
+    } catch (error) {
+        res.status(400).json({
+            status: "FAILED",
+            message: error.message
+        });
+    }
+})
+
+router.patch('/updateImage', async (req, res) => {
+    try {
+        const { userId, url } = req.body;
+        const updatedUser = await updateImage(userId, url);
+        res.status(200).json({ status: "SUCCESS", message: "Details Updated", data: updatedUser});
     } catch (error) {
         res.status(400).json({
             status: "FAILED",

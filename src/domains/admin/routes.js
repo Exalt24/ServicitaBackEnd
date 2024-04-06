@@ -20,11 +20,12 @@ router.get('/getUser/:userId', async (req, res) => {
         const user = await findUserById(userId);
         res.status(200).json({status: 'SUCCESS', message: 'User fetched successfully', data: user});
     } catch (error) {
+        console.log(error.message)
         res.status(400).json({status: 'FAILED', message: error.message});
     }
 })
 
-router.delete('/deleteUser', async (req, res) => {
+router.post('/deleteUser', async (req, res) => {
     try {
         const { userId } = req.body;
         const response = await deleteUser(userId);
@@ -63,6 +64,7 @@ router.get('/checkSuspensionStatus/:email', async (req, res) => {
         res.status(400).json({status: 'FAILED', message: error.message});
     }
 })
+    
 
 module.exports = router;
 

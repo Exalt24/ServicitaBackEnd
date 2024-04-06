@@ -4,8 +4,8 @@ const verifyHashedData = require('./../../util/verifyHashedData');
 
 const createNewUser = async (data) => {
     try {
-        const { email, mobile, password, role} = data;
-        if (!email || !mobile || !password || !role) {
+        const { email, mobile, password, role, profileImage} = data;
+        if (!email || !mobile || !password || !role || !profileImage) {
             throw new Error("Missing required parameters for user creation.");
         }
         const hashedPassword = await hashData(password);
@@ -14,6 +14,11 @@ const createNewUser = async (data) => {
             mobile,
             password: hashedPassword,
             role,
+            profileImage,
+            suspension: {
+                isSuspended: false,
+                expiresAt: null
+            }
         });
         const createdUser = await newUser.save();
         await TempUser.deleteOne({ email: email });
@@ -224,4 +229,22 @@ const updateTempUserNumber = async (email, mobile) => {
     }
 }
 
-module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile}
+const updateImage = async (userId, url) => {
+    try {
+        if (!userId || !url) {
+            throw new Error("Missing required parameters for updating user image.");
+        }
+        const user = await User.findOne({ _id: userId });
+        if (!user) {
+            throw new Error("No user found with the given ID.");
+        } else {
+            const updatedUser = await User.updateOne({ _id: userId }, { profileImage: url });
+            return updatedUser;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+
+module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage}
