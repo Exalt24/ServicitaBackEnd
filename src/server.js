@@ -15,9 +15,6 @@ app.use(cors(corsOptions))
 // const CustomError = require('./util/CustomError');
 // const globalErrorHandler = require('./domains/errorController');
 
-
-
-
 // Accepting Post Form Data
 app.use(bodyParser());
 // Registering Routes

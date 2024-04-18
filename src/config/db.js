@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
-const Location = require('./../domains/location/model');
-const { User } = require('./../domains/user/model');
-const  Admin  = require('./../domains/admin/model');
-const hashData = require('./../util/hashData');
+const { initiatePayment } = require('../domains/payment/controller');
+const Report = require('../domains/report/model');
 
 const mongoURI = process.env.MONGODB_URI;
 
@@ -16,7 +14,6 @@ mongoose.connection.on('connected', () => {
 mongoose.connection.on('error', (err) => {
   console.error(`Mongoose connection error: ${err}`);
 });
-
 
 
 
