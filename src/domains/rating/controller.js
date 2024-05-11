@@ -1,17 +1,18 @@
 const Rating = require('./model');
 
-const createRating = async (reviewId, bookingId, rating, comment, serviceId, seekerId, providerId) => {
+const createRating = async (bookingId, rating, comment, serviceId, seekerId, providerId, images, seekerImage, seekerName) => {
     try {
-
         const newRating = await Rating.create({
-            reviewId,
             bookingId,
             rating,
             comment,
-            createdAt: new Date(),
             serviceId,
             seekerId,
-            providerId
+            providerId,
+            images,
+            seekerImage,
+            seekerName,
+            createdAt: new Date(),
         });
         return newRating;
     } catch (error) {
@@ -38,6 +39,19 @@ const getRatingsByService = async (serviceId) => {
     }
 }
 
+const getRatingByBooking = async (bookingId) => {
+    try {
+        const rating = await Rating.findOne({ bookingId });
+        if (!rating) {
+            return false;
+        }
+        return true
+    }
+    catch (error) {
+        throw error;
+    }
+}
 
 
-module.exports = { createRating, getRatingsByUser, getRatingsByService };
+
+module.exports = { createRating, getRatingsByUser, getRatingsByService, getRatingByBooking };

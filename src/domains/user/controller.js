@@ -151,6 +151,25 @@ const getDetails = async (email) => {
     }
 }
 
+const getDetailsById = async (id) => {
+    try {
+        if (!id) {
+            throw new Error("Missing required parameters for getting user details.");
+        }
+        const tempUser = await TempUser.findOne({ _id: id });
+        const user = await User.findOne({ _id: id });
+        if (!tempUser && !user) {
+            throw new Error("No user found with the given ID.");
+        } else if (tempUser) {
+            return { data: tempUser, type: "temp" };
+        } else {
+            return { data: user, type: "permanent" };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 const getDetailsByMobile = async (mobile) => {
     try {
         if (!mobile) {
@@ -247,4 +266,4 @@ const updateImage = async (userId, url) => {
 }
 
 
-module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage}
+module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById}

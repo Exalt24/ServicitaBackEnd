@@ -1,78 +1,53 @@
-require('dotenv').config();
-const Payment = require('./model');
-const Booking = require('../booking/model');
-const { CheckoutAPI, Client } = require('@adyen/api-library');
+"use strict";
 
-const client = new Client({apiKey: process.env.ADYEN_API, environment: "TEST"});
-const checkoutAPI = new CheckoutAPI(client);
+const paymongo = require('paymongo-node')(process.env.PAYMONGO_SECRET)
 
-const initiatePayment = async (value, type, bookingId) => {
-
-const referenceApi = bookingId;
-
-const paymentRequest = {
-  countryCode: "PH",
-  amount: {
-    currency: "PHP",
-    value: value
-  },
-  reference: referenceApi,
-  paymentMethod: {
-    type: type
-  },
-  returnUrl: `http://localhost:5000/payment/handleShopperRedirect?orderRef=${referenceApi}`,
-  merchantAccount: process.env.ADYEN_MERCHANT_ACCOUNT,
-}
-
-try {
-  const response = await checkoutAPI.PaymentsApi.payments(paymentRequest, { idempotencyKey: paymentRequest.reference });
-  const newPayment = new Payment({
-    bookingId: referenceApi,
-    amount: value,
-    status: "PENDING",
-    paymentMethod: type,
-    createdAt: new Date(),
-    expiresAfter: new Date(Date.now() + 15 * 60000)
-  });
-
-  const createdPayment = await newPayment.save();
-  return {
-    status: "SUCCESS",
-    message: "Payment initiated successfully",
-    data: response,
-    payment: createdPayment
-  }
-} catch (error) {
-  console.error("Adyen payment error:", error);
-}
-}
-
-
-async function consumeEvent(notification) {
-
+const initiatePayment = async (type, amount, redirect) => {
   try {
-    if (notification.success === "true") {
-     
-      await Payment.findOneAndDelete({ bookingId: notification.merchantReference });
-      await Booking.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(notification.merchantReference) },
-        { 
-          status: "PENDING"
-        }
-      );
-    } else {  
-      await Payment.findOneAndDelete({ bookingId: notification.merchantReference });
-      await Booking.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(notification.merchantReference) }, 
-        { 
-          status: "FAILED" 
-        }
-      );
+    const resource = await paymongo.sources.create({
+      amount: amount * 100,
+      currency: 'PHP',
+      type: type,
+      redirect: {
+        success: redirect.success,
+        failed: redirect.failed
+      },
+    });
+    return resource;
+  } catch (e) {
+    if (e.type === "AuthenticationError") {
+      console.log("auth error");
+      throw new Error("AuthenticationError");
+    } else if (e.type === "RouteNotFoundError") {
+      console.log("route not found");
+      throw new Error("RouteNotFoundError");
+    } else if (e.type === "InvalidRequestError") {
+      console.log(e.errors);
+      throw new Error("InvalidRequestError");
     }
-  } catch (error) {
-    console.error(error);
+  }
   }
   
-}
+  const retrievePayment = async (id) => {
+    try {
+      const payment = await paymongo.sources.retrieve(id);
+      return payment;
+    } catch (e) {
+      if (e.type === "AuthenticationError") {
+        console.log("auth error");
+        throw new Error("AuthenticationError");
+      } else if (e.type === "ResourceNotFoundError") {
+        console.log(e.errors);
+        throw new Error("ResourceNotFoundError");
+      } else if (e.type === "RouteNotFoundError") {
+        console.log("route not found");
+        throw new Error("RouteNotFoundError");
+      } else if (e.type === "InvalidRequestError") {
+        console.log(e.errors);
+        throw new Error("InvalidRequestError");
+      }
+    }
+  }
 
-module.exports = { initiatePayment, consumeEvent };
+module.exports = { initiatePayment, retrievePayment};
+  

@@ -1,11 +1,12 @@
 const Report = require('./model');
 
-const createReport = async (reporterId, reportedId, reason) => {
+const createReport = async (reporterId, reportedId, reason, bookingId) => {
     try {
         const newReport = new Report({
             reporterId,
             reportedId,
             reason,
+            bookingId,
             createdAt: new Date(),
         });
         return await newReport.save();
@@ -30,4 +31,18 @@ const deleteReport = async (reportId) => {
     }
 }
 
-module.exports = { createReport, getReports, deleteReport };
+const getReportByBookingId = async (bookingId, reporterId) => {
+    try {
+        const report = await Report.findOne({ bookingId, reporterId });
+        if (!report) {
+            return false;
+        }
+        return true;
+    }
+    catch (error) {
+        throw error;
+    }
+}
+
+
+module.exports = { createReport, getReports, deleteReport, getReportByBookingId };

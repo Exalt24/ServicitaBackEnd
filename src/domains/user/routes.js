@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage } = require('./controller');
+const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById } = require('./controller');
 
 router.post('/signup', async (req, res) => {
     try {
@@ -160,23 +160,52 @@ router.post('/userData', async (req, res) => {
 router.post('/getUserDetailsByEmail', async (req, res) => {
     try {
         const { email } = req.body;
-        const { userDetails, type } = await getDetails(email);
+        const { data, type } = await getDetails(email);
         if (type === "temp") {
             res.status(200).json({
                 status: "SUCCESS",
                 message: "Temporary user found",
-                data: userDetails,
+                data: data,
                 type: "temp"
             });
         } else {
             res.status(200).json({
                 status: "SUCCESS",
                 message: "Permanent user found",
-                data: userDetails,
+                data: data,
                 type: "permanent"
             });
         }
     } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            status: "FAILED",
+            message: error.message
+        });
+    }
+})
+
+router.post('/getUserDetailsById', async (req, res) => {
+    try {
+        const { id } = req.body;
+        const { data, type } = await getDetailsById(id);
+        if (type === "temp") {
+            res.status(200).json({
+                status: "SUCCESS",
+                message: "Temporary user found",
+                data: data,
+                type: "temp"
+            });
+        } else {
+            res.status(200).json({
+                status: "SUCCESS",
+                message: "Permanent user found",
+                data: data,
+                type: "permanent"
+            });
+        }
+    } catch (error) {
+        console.log(error)
         res.status(400).json({
             status: "FAILED",
             message: error.message

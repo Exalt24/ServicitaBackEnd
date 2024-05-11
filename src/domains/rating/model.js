@@ -5,10 +5,13 @@ const RatingSchema = new Schema({
     bookingId: String,
     rating: Number,
     comment: String,
-    createdAt: Date,
     serviceId: String,
     seekerId: String,
-    providerId: String
+    providerId: String,
+    seekerImage: String,
+    seekerName: String,
+    images: [],
+    createdAt: Date,
 });
 
 const Rating = mongoose.model('Rating', RatingSchema);

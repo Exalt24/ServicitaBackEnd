@@ -3,11 +3,14 @@ const generateOTP = require('../../util/generateOTP');
 const hashData = require('./../../util/hashData');
 const sendEmail = require('../../util/sendEmail');
 const verifyHashedData = require('../../util/verifyHashedData');
+const fs = require('fs');
 const { User, TempUser } = require('../user/model');
 
 
-const sendOTPVerificationEmail = async ({ email }) => {
-    if ( !email ) {
+
+
+const sendOTPVerificationEmail = async ({ email, name }) => {
+    if ( !email || !name ) {
         throw new Error("Missing required parameters for sending verification email.");
     }
     try {
@@ -23,13 +26,13 @@ const sendOTPVerificationEmail = async ({ email }) => {
                 await UserOTPVerification.deleteMany({ email });
             }
             const otp = await generateOTP();
+            const htmlTemplate = fs.readFileSync('./src/pages/test.html', 'utf8');
+            const replacedHTML = htmlTemplate.replace("{{OTP_PLACEHOLDER}}", otp).replace("{{NAME_PLACEHOLDER}}", name);
             const mailOptions = {
                 from: process.env.AUTH_EMAIL,
                 to: email,
                 subject: "Verify your Email Address",
-                html: `<p>Verify your email address to complete the sign up process.</p>
-                <p>This code <b>expires in 5 minutes</b>.</p>
-                <p>Enter <b>${otp}</b> in the app to verify your email address and complete the process.`
+                html: replacedHTML
             }
             const hashedOTP = await hashData(otp);
             const newOTPVerification = new UserOTPVerification({

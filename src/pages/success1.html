@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Success</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #07374d; /* Green background color */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    .check-icon {
+        width: 100px;
+        height: 100px;
+        background-color: #ffffff;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    
+    .check-icon::before {
+        content: '\2713'; /* Checkmark character */
+        font-size: 50px;
+        color: #07374d;
+    }
+    
+    .message {
+        text-align: center;
+        color: #ffffff;
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    .status {
+        font-weight: bold;
+        color: #ffffff;
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="check-icon"></div>
+<div class="status">SUCCESS</div>
+<div class="message">Please close the window to continue.</div>
+
+
+</body>
+</html>

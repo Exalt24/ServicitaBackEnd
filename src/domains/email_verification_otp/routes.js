@@ -5,10 +5,11 @@ const { sendOTPVerificationEmail, verifyOTP, getTime } = require("./controller")
 
 router.post("/sendEmail", async (req, res) => {
     try {
-        let { email } = req.body;
-        const emailData = await sendOTPVerificationEmail({ email });
+        let { email, name } = req.body;
+        const emailData = await sendOTPVerificationEmail({ email, name });
         res.status(202).json({ status: "PENDING", message: "Verification Email Sent", data: emailData });
     } catch (error) {
+        console.log(error);
         res.status(400).json({ status: "FAILED", message: error.message });
     }
 })
