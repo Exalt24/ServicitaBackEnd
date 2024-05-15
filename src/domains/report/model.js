@@ -6,6 +6,7 @@ const ReportSchema = new Schema({
     reportedId: String,
     bookingId: String,
     reason: String,
+    status: String,
     createdAt: Date,
 });
 

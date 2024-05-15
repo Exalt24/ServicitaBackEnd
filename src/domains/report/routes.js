@@ -5,8 +5,8 @@ const { createReport, getReports, deleteReport, getReportByBookingId } = require
 
 router.post('/createReport', async (req, res) => {
     try {
-        const { reporterId, reportedId, reason, bookingId } = req.body;
-        const newReport = await createReport(reporterId, reportedId, reason, bookingId);
+        const { reporterId, reportedId, reason, bookingId, status } = req.body;
+        const newReport = await createReport(reporterId, reportedId, reason, bookingId, status);
         res.status(201).json(newReport);
     } catch (error) {
         res.status(400).json({ error: error.message });

@@ -1,12 +1,13 @@
 const Report = require('./model');
 
-const createReport = async (reporterId, reportedId, reason, bookingId) => {
+const createReport = async (reporterId, reportedId, reason, bookingId, status) => {
     try {
         const newReport = new Report({
             reporterId,
             reportedId,
             reason,
             bookingId,
+            status,
             createdAt: new Date(),
         });
         return await newReport.save();
