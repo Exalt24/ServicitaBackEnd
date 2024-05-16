@@ -23,6 +23,25 @@ const login = async (username, password) => {
     }
 }
 
+const getAdminDetails = async (adminId) => {
+    try {
+        if (!adminId) {
+            throw new Error('Admin ID is required');
+        }
+        const admin = await Admin.findOne
+        ({
+            _id: adminId
+        });
+        if(!admin){
+            throw new Error('Admin not found');
+        } else {
+            return admin;
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
 const findUserById = async (userId) => {
     try {
         if (!userId) {
@@ -129,4 +148,4 @@ const checkSuspensionStatus = async (email) => {
     }
 }
 
-module.exports = { login, findUserById, deleteUser, suspendUser, unsuspendUser, checkSuspensionStatus };
+module.exports = { login, findUserById, deleteUser, suspendUser, unsuspendUser, checkSuspensionStatus, getAdminDetails };

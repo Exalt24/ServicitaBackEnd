@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { login, findUserById, deleteUser, suspendUser, unsuspendUser, checkSuspensionStatus } = require('./controller');
+const { login, findUserById, deleteUser, suspendUser, unsuspendUser, checkSuspensionStatus, getAdminDetails } = require('./controller');
 
 router.post('/login', async (req, res) => {
     try{
@@ -13,6 +13,17 @@ router.post('/login', async (req, res) => {
         console.log('Login failed');
     }
 })
+
+router.get('/getAdmin/:adminId', async (req, res) => {
+    try{
+        const { adminId } = req.params;
+        const admin = await getAdminDetails(adminId);
+        res.status(200).json({status: 'SUCCESS', message: 'Admin fetched successfully', data: admin});
+    } catch (error) {
+        res.status(400).json({status: 'FAILED', message: error.message});
+    }
+}
+)
 
 router.get('/getUser/:userId', async (req, res) => {
     try{
