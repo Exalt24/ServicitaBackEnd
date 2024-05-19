@@ -11,6 +11,8 @@ const paymentRoutes = require('./../domains/payment');
 const postRoutes = require('./../domains/post');
 const ratingRoutes = require('./../domains/rating');
 const reportRoutes = require('./../domains/report');
+const aiRoutes = require('./../domains/ai');
+const notificationRoutes = require('./../domains/notifications');
 
 router.use('/user', userRoutes);
 router.use('/email_verification_otp', EmailVerificationOTPRoutes);
@@ -22,5 +24,7 @@ router.use('/payment', paymentRoutes);
 router.use('/post', postRoutes);
 router.use('/rating', ratingRoutes);
 router.use('/report', reportRoutes);
+router.use('/ai', aiRoutes);
+router.use('/notifications', notificationRoutes);
 
 module.exports = router;
