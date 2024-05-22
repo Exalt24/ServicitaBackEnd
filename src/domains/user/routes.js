@@ -86,7 +86,9 @@ router.post('/login', async (req, res) => {
         res.status(200).json({
             status: "SUCCESS",
             message: "Login Successful",
-            data: token
+            data: token,
+            userId: authenticatedUser._id,
+            role: authenticatedUser.role
         })
     } catch (error) {
         res.status(400).json({
@@ -106,7 +108,9 @@ router.post('/loginOther', async (req, res) => {
         res.status(200).json({
             status: "SUCCESS",
             message: "Login Successful",
-            data: token
+            data: token,
+            userId: authenticatedUser._id,
+            role: authenticatedUser.role
         })
     } catch (error) {
         console.log(error)
@@ -126,7 +130,9 @@ router.post('/loginUsingMobile', async (req, res) => {
         res.status(200).json({
             status: "SUCCESS",
             message: "Login Successful",
-            data: token
+            data: token,
+            userId: authenticatedUser._id,
+            role: authenticatedUser.role
         });
 
     } catch (error) {
