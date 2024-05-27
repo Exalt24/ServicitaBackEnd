@@ -45,5 +45,12 @@ const getReportByBookingId = async (bookingId, reporterId) => {
     }
 }
 
+const updateReport = async (id, status) => {
+    try {
+        return await Report.findByIdAndUpdate(id, { status })
+    } catch (error) {
+        throw error;
+    }
+}
 
-module.exports = { createReport, getReports, deleteReport, getReportByBookingId };
+module.exports = { createReport, getReports, deleteReport, getReportByBookingId, updateReport };

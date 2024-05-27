@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { createReport, getReports, deleteReport, getReportByBookingId } = require('./controller');
+const { createReport, getReports, deleteReport, getReportByBookingId, updateReport } = require('./controller');
 
 router.post('/createReport', async (req, res) => {
     try {
@@ -39,6 +39,23 @@ router.post('/getReportByBookingId', async (req, res) => {
         res.status(200).json(report);
     } catch (error) {
         res.status(400).json({ error: error.message });
+    }
+})
+
+router.put('/updateReport/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { status } = req.body;
+
+        const record = await updateReport(id, status)
+
+        if (!record) {
+            return res.status(404).send('Record not found');
+        }
+
+        res.send(record);
+    } catch (error) {
+        return res.status(404).json({error: error.message});
     }
 })
 

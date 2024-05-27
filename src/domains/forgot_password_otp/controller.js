@@ -4,6 +4,7 @@ const hashData = require('./../../util/hashData');
 const sendEmail = require('./../../util/sendEmail');
 const generateOTP = require('./../../util/generateOTP');
 const verifyHashedData = require('./../../util/verifyHashedData');
+const fs = require('fs');
 
 const requestOTPPasswordReset = async (email) => {
     try {
@@ -27,15 +28,15 @@ const sendOTPPasswordResetEmail = async (email) => {
         if (!email) {
             throw new Error("Missing parameters for password reset.");
         }
-        const otp = await generateOTP();
         await PasswordResetOTP.deleteMany( {email} );
+        const otp = await generateOTP();
+        const htmlTemplate = fs.readFileSync('./src/pages/test1.html', 'utf8');
+        const replacedHTML = htmlTemplate.replace("{{OTP_PLACEHOLDER}}", otp);
         const mailOptions = {
             from: process.env.AUTH_EMAIL,
             to: email,
-            subject: "Password Reset Request",
-            html: `<p>We heard that you lost your password.</p>
-            <p>This code <b>expires in 5 minutes</b>.</p>
-            <p>Enter <b>${otp}</b> in the app to change your password and complete the process.`
+            subject: "Verify your Email Address",
+            html: replacedHTML
         }
         const hashedOTP = await hashData(otp);
         const newOTPPasswordReset = await new PasswordResetOTP({
