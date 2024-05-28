@@ -1,16 +1,16 @@
 // To Access MongoDB
 const FirebaseService = require('./config/firebase');
-const { Expo } = require('expo-server-sdk');
-const { CronJob } = require('cron');
+// const { Expo } = require('expo-server-sdk');
+// const { CronJob } = require('cron');
 
 require('./config/db');
 
 const app = require('express')();
-const bodyParser = require('express').json;
+// const bodyParser = require('express').json;
 
 
 const routes = require('./routes');
-const cors=require("cors");
+const cors = require("cors");
 const corsOptions ={
    origin:'*', 
    credentials:true,
@@ -22,8 +22,8 @@ app.use(cors(corsOptions))
 // const globalErrorHandler = require('./domains/errorController');
 
 // Accepting Post Form Data
-app.use(bodyParser());
-const expo = new Expo();
+// app.use(bodyParser());
+// const expo = new Expo();
 
 // new CronJob('*/30 * * * * *', async () => {
 //    const users = await FirebaseService.getAllUsers();
