@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { create, getNotifications, markAsRead } = require('./controller');
+const { create, getNotifications, markAsRead, deleteNotification } = require('./controller');
 
 router.post('/create', async (req, res) => {
     try {
@@ -28,6 +28,17 @@ router.post('/markAsRead', async (req, res) => {
     try {
         const { notificationId } = req.body;
         const notification = await markAsRead(notificationId);
+        res.status(200).json({ status: 'SUCCESS', data: notification });
+    } catch (error) {
+        res.status(400).json({ status: 'FAILED', message: error.message });
+    }
+}
+);
+
+router.delete('/deleteNotification', async (req, res) => {
+    try {
+        const { notificationId } = req.body;
+        const notification = await deleteNotification(notificationId);
         res.status(200).json({ status: 'SUCCESS', data: notification });
     } catch (error) {
         res.status(400).json({ status: 'FAILED', message: error.message });

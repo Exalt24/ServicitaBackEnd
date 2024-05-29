@@ -4,7 +4,6 @@ const create = async ( userId, title, message ) => {
    if (!userId || !title || !message ) {
        throw new Error('Missing required fields');
    }
-
     const notification = await Notification.create({
         userId,
         title,
@@ -16,6 +15,15 @@ const create = async ( userId, title, message ) => {
 
     return notification;
 
+}
+
+const deleteNotification = async ( notificationId ) => {
+    if (!notificationId) {
+        throw new Error('Missing required fields');
+    }
+    const notification = await Notification.findByIdAndDelete(notificationId);
+
+    return notification;
 }
 
 const getNotifications = async ( userId ) => {
@@ -40,4 +48,4 @@ const markAsRead = async ( notificationId ) => {
     return notification;
 }
 
-module.exports = { create, getNotifications, markAsRead };
+module.exports = { create, getNotifications, markAsRead, deleteNotification };
