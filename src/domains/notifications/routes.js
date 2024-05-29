@@ -4,8 +4,8 @@ const { create, getNotifications, markAsRead, deleteNotification } = require('./
 
 router.post('/create', async (req, res) => {
     try {
-        const { userId, title, message } = req.body;
-        const notification = await create(userId, title, message);
+        const { userId, title, message, otherUserId } = req.body;
+        const notification = await create(userId, title, message, otherUserId);
         res.status(200).json({ status: 'SUCCESS', data: notification });
     } catch (error) {
         res.status(400).json({ status: 'FAILED', message: error.message });

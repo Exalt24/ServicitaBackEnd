@@ -1,6 +1,6 @@
 const Notification = require('./model');
 
-const create = async ( userId, title, message ) => {
+const create = async ( userId, title, message, otherUserId ) => {
    if (!userId || !title || !message ) {
        throw new Error('Missing required fields');
    }
@@ -9,6 +9,7 @@ const create = async ( userId, title, message ) => {
         title,
         message,
         isRead: false,
+        otherUserId,
         createdAt: new Date(),
         expiresAfter: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
     });

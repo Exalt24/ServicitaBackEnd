@@ -6,6 +6,7 @@ const NotificationSchema = new Schema({
     title: String,
     message: String,
     isRead: Boolean,
+    otherUserId: String,
     createdAt: Date,
     expiresAfter: Date,
 });
