@@ -80,6 +80,7 @@ router.post('/getTempDetails', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     try {
+        console.log(req.body)
         const { email, password } = req.body;
         const authenticatedUser = await authenticateUser(email, password);
         const token = jwt.sign({ email: authenticatedUser.email }, JWT_SECRET, { expiresIn: '1h' });

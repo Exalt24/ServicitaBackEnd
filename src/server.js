@@ -6,7 +6,7 @@ const FirebaseService = require('./config/firebase');
 require('./config/db');
 
 const app = require('express')();
-// const bodyParser = require('express').json;
+const bodyParser = require('express').json;
 
 
 const routes = require('./routes');
@@ -22,7 +22,7 @@ app.use(cors(corsOptions))
 // const globalErrorHandler = require('./domains/errorController');
 
 // Accepting Post Form Data
-// app.use(bodyParser());
+app.use(bodyParser());
 // const expo = new Expo();
 
 // new CronJob('*/30 * * * * *', async () => {
