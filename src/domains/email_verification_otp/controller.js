@@ -80,6 +80,39 @@ const verifyOTP = async ({ email, otp }) => {
     }
 }
 
+const sendConfirmationEmail = async ( email, name, role ) => {
+    if (!email || !name) {
+        throw new Error("Missing required parameters for sending confirmation email.");
+    }
+    try {
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            throw new Error("Email does not exist in the system.");
+        } else {
+            let htmlTemplate;
+            let replacedHTML;
+            if (role === "Seeker") {
+                htmlTemplate = fs.readFileSync('./src/pages/confirmation.html', 'utf8');
+                replacedHTML = htmlTemplate.replace("{{NAME_PLACEHOLDER}}", name);
+            } else if (role === "Provider") {
+                htmlTemplate = fs.readFileSync('./src/pages/confirmationProvider.html', 'utf8');
+                replacedHTML = htmlTemplate.replace("{{NAME_PLACEHOLDER}}", name);
+            }
+            const mailOptions = {
+                from: process.env.AUTH_EMAIL,
+                to: email,
+                subject: role === "Seeker" ? "Welcome to Servicita! Start Exploring Services Today 🚀" : "Welcome to Servicita! Start Offering Your Services Today 🚀",
+                html: replacedHTML
+            }
+            await sendEmail(mailOptions);
+            return { email };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 const getTime = async (email) => {
     if (!email) {
         throw new Error("Missing required parameters for getting remaining time.");
@@ -100,4 +133,4 @@ const getTime = async (email) => {
 
 }
 
-module.exports = { sendOTPVerificationEmail, verifyOTP, getTime };
+module.exports = { sendOTPVerificationEmail, verifyOTP, getTime, sendConfirmationEmail };
