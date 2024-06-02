@@ -5,6 +5,7 @@ const sendEmail = require('../../util/sendEmail');
 const verifyHashedData = require('../../util/verifyHashedData');
 const fs = require('fs');
 const { User, TempUser } = require('../user/model');
+const { send } = require('process');
 
 
 
@@ -133,4 +134,29 @@ const getTime = async (email) => {
 
 }
 
-module.exports = { sendOTPVerificationEmail, verifyOTP, getTime, sendConfirmationEmail };
+const sendReceiptEmail = async (email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount) => {
+    if (!email || !name) {
+        throw new Error("Missing required parameters for sending receipt email.");
+    }
+    try {
+        const existingUser = await User.findOne({ email });
+        if (!existingUser) {
+            throw new Error("Email does not exist in the system.");
+        } else {
+            const htmlTemplate = fs.readFileSync('./src/pages/receipt.html', 'utf8');
+            const replacedHTML = htmlTemplate.replace("{{NAME_PLACEHOLDER}}", name).replace("{{BOOKING_ID_PLACEHOLDER}}", bookingId).replace("{{PROVIDER_NAME_PLACEHOLDER}}", providerName).replace("{{LOCATION_PLACEHOLDER}}", location).replace("{{DATE_PLACEHOLDER}}", date).replace("{{TIME_PLACEHOLDER}}", time).replace("{{TRANSACTION_ID_PLACEHOLDER}}", transactionId).replace("{{CREATED_AT_PLACEHOLDER}}", createdAt).replace("{{EXPIRES_AT_PLACEHOLDER}}", expiresAt).replace("{{PAYMENT_METHOD_PLACEHOLDER}}", paymentMethod).replace("{{AMOUNT_PLACEHOLDER}}", amount);
+            const mailOptions = {
+                from: process.env.AUTH_EMAIL,
+                to: email,
+                subject: "Receipt for Your Recent Transaction",
+                html: replacedHTML
+            }
+            await sendEmail(mailOptions);
+            return { email };
+        }
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { sendOTPVerificationEmail, verifyOTP, getTime, sendConfirmationEmail, sendReceiptEmail };

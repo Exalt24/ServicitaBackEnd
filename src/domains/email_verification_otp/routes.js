@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendOTPVerificationEmail, verifyOTP, getTime, sendConfirmationEmail } = require("./controller");
+const { sendOTPVerificationEmail, verifyOTP, getTime, sendConfirmationEmail, sendReceiptEmail } = require("./controller");
 
 
 router.post("/sendEmail", async (req, res) => {
@@ -24,7 +24,7 @@ router.post("/verifyOTP", async (req, res) => {
     }
 });
 
-router.post ("/sendConfirmationEmail", async (req, res) => {
+router.post("/sendConfirmationEmail", async (req, res) => {
     try {
         let { email, name, role } = req.body;
         const emailData = await sendConfirmationEmail(email, name, role);
@@ -44,5 +44,24 @@ router.get("/getRemainingCurrentTime/:email", async (req, res) => {
         res.status(400).json({ status: "FAILED", message: error.message });
     }
 });
+
+router.post('/sendReceipt', async (req, res) => {
+    try {
+        const { email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount } = req.body;
+        const sendReceipt = await sendReceiptEmail(email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount);
+        res.status(200).json({
+            status: "SUCCESS",
+            message: "Receipt Sent",
+            data: sendReceipt
+        });
+    } catch (error) {
+        console.log(error)
+        res.status(400).json({
+            status: "FAILED",
+            message: error.message
+        });
+    
+    }
+})
 
 module.exports = router;

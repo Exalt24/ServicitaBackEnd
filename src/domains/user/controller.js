@@ -266,4 +266,6 @@ const updateImage = async (userId, url) => {
 }
 
 
-module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById}
+
+
+module.exports = { createNewUser, authenticateUser, authenticateUserWithoutPass, authenticateUserWithNumber, addTempUser, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById };

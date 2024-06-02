@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById } = require('./controller');
+const { createNewUser, authenticateUser, authenticateUserWithoutPass, addTempUser, authenticateUserWithNumber, getDetails, updateDetail, getDetailsByMobile, updateTempUserNumber, getActualDetailsByMobile, updateImage, getDetailsById, sendReceiptEmail } = require('./controller');
 
 router.post('/signup', async (req, res) => {
     try {
@@ -295,6 +295,8 @@ router.patch('/updateImage', async (req, res) => {
         });
     }
 })
+
+
 
 module.exports = router;
 
