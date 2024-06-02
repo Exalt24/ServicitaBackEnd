@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8; 
+        }
+        .container {
+            width: 50%;
+            max-width: 400px;
+            margin: auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            padding: 0;
+            background: url('serv.png') no-repeat center center;
+            background-size: cover;
+            height: 150px;
+            border-radius: 10px 10px 0 0;
+        }
+        .logo-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .title-container {
+            background: linear-gradient(to right, #4c9daf, #4c6daf);
+            padding: 10px 0;
+            border-radius: 0 0 10px 10px;
+            text-align: center;
+        }
+        .title-container h1 {
+            margin: 0;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .content {
+            margin: 20px 0;
+        }
+        .content h2 {
+            color: #333333;
+            font-size: 1.2em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .content p {
+            color: #666666;
+            font-size: 0.9em;
+        }
+        .details {
+            margin: 20px 0;
+        }
+        .details table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .details th, .details td {
+            padding: 10px;
+            border: 1px solid #dddddd;
+            text-align: left;
+            font-size: 0.9em;
+        }
+        .details th {
+            background-color: #4c9daf;
+            color: white;
+        }
+        .details td {
+            background-color: #f0f4f8;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            color: #666666;
+            background: linear-gradient(to right, #4c9daf, #4c6daf);
+            color: white;
+            border-radius: 0 0 10px 10px;
+            position: relative;
+        }
+        .footer a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+        .social-icons {
+            margin-top: 10px;
+        }
+        .social-icons a {
+            display: inline-block;
+            margin: 0 5px;
+        }
+        .social-icons img {
+            width: 25px;
+            height: 25px;
+        }
+        .bottom-logo {
+            display: block;
+            margin: 10px auto 0 auto;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+    </div>
+    <div class="title-container">
+        <h1>Booking Confirmation</h1>
+    </div>
+    <div class="content">
+        <h2>Hi {{NAME_PLACEHOLDER}},</h2>
+        <p>Your booking is confirmed! Below are the details of your booking:</p>
+    </div>
+    <div class="details">
+        <table>
+            <tr>
+                <th>Booking ID</th>
+                <td>{{BOOKING_ID_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Provider</th>
+                <td>{{PROVIDER_NAME_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{LOCATION_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{DATE_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Time</th>
+                <td>{{TIME_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Transaction ID</th>
+                <td>{{TRANSACTION_ID_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Created At</th>
+                <td>{{CREATED_AT_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Expires At</th>
+                <td>{{EXPIRES_AT_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Payment Method</th>
+                <td>{{PAYMENT_METHOD_PLACEHOLDER}}</td>
+            </tr>
+            <tr>
+                <th>Amount</th>
+                <td>{{AMOUNT_PLACEHOLDER}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="content">
+        <p>If you have any questions or need to make changes to your booking, please contact us using the app.</p>
+        <p>We are excited to have you with us!</p>
+    </div>
+    <div class="footer">
+        <img src="logo4home.png" alt="Servicita Logo" class="bottom-logo">
+        <p>Thank you for booking with Servicita.</p>
+        <div class="social-icons">
+            <a href="https://www.facebook.com/Servicita?mibextid=ZbWKwL"><img src="facebook.png" alt="Facebook"></a>
+            <a href="https://www.instagram.com/serv.icita/"><img src="instagram.png" alt="Instagram"></a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
