@@ -48,7 +48,9 @@ router.get("/getRemainingCurrentTime/:email", async (req, res) => {
 router.post('/sendReceipt', async (req, res) => {
     try {
         const { email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount } = req.body;
+        console.log(req.body)
         const sendReceipt = await sendReceiptEmail(email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount);
+    
         res.status(200).json({
             status: "SUCCESS",
             message: "Receipt Sent",

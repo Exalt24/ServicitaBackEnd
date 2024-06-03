@@ -135,7 +135,7 @@ const getTime = async (email) => {
 }
 
 const sendReceiptEmail = async (email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount) => {
-    if (!email || !name) {
+    if (!email || !name || !bookingId || !providerName || !location || !date || !time || !transactionId || !createdAt || !expiresAt || !paymentMethod || !amount) {
         throw new Error("Missing required parameters for sending receipt email.");
     }
     try {
