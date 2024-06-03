@@ -81,8 +81,8 @@ const verifyOTP = async ({ email, otp }) => {
     }
 }
 
-const sendConfirmationEmail = async ( email, name, role ) => {
-    if (!email || !name) {
+const sendConfirmationEmail = async ({ email, name, role }) => {
+    if (!email || !name || !role) {
         throw new Error("Missing required parameters for sending confirmation email.");
     }
     try {
@@ -134,7 +134,7 @@ const getTime = async (email) => {
 
 }
 
-const sendReceiptEmail = async (email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount) => {
+const sendReceiptEmail = async ({email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount}) => {
     if (!email || !name || !bookingId || !providerName || !location || !date || !time || !transactionId || !createdAt || !expiresAt || !paymentMethod || !amount) {
         throw new Error("Missing required parameters for sending receipt email.");
     }
@@ -151,8 +151,8 @@ const sendReceiptEmail = async (email, name, bookingId, providerName, location, 
                 subject: "Receipt for Your Recent Transaction",
                 html: replacedHTML
             }
-            await sendEmail(mailOptions);
-            return { email };
+            const result = await sendEmail(mailOptions);
+            return { result };
         }
     } catch (error) {
         throw error;

@@ -27,7 +27,8 @@ router.post("/verifyOTP", async (req, res) => {
 router.post("/sendConfirmationEmail", async (req, res) => {
     try {
         let { email, name, role } = req.body;
-        const emailData = await sendConfirmationEmail(email, name, role);
+        console.log(req.body)
+        const emailData = await sendConfirmationEmail({ email, name, role });
         res.status(202).json({ status: "PENDING", message: "Confirmation Email Sent", data: emailData });
     } catch (error) {
         console.log(error);
@@ -47,10 +48,10 @@ router.get("/getRemainingCurrentTime/:email", async (req, res) => {
 
 router.post('/sendReceipt', async (req, res) => {
     try {
-        const { email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount } = req.body;
+        let { email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount } = req.body;
         console.log(req.body)
-        const sendReceipt = await sendReceiptEmail(email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount);
-    
+        const sendReceipt = await sendReceiptEmail({email, name, bookingId, providerName, location, date, time, transactionId, createdAt, expiresAt, paymentMethod, amount});
+        console.log(sendReceipt)
         res.status(200).json({
             status: "SUCCESS",
             message: "Receipt Sent",
