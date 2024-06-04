@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { createPost, getPostsById } = require('./controller');
+const { createPost, getPostsById, deletePost } = require('./controller');
 
 router.post('/createPost', async (req, res) => {
     try {
@@ -28,6 +28,23 @@ router.post('/getPostsById', async (req, res) => {
             status: "SUCCESS",
             message: "Posts fetched successfully.",
             data: posts
+        });
+    } catch (error) {
+        res.status(400).json({
+            status: "FAILED",
+            message: error.message
+        });
+    }
+})
+
+router.post('/deletePost', async (req, res) => {
+    try {
+        const { postId } = req.body;
+        const post = await deletePost(postId);
+        res.status(200).json({
+            status: "SUCCESS",
+            message: "Post deleted successfully.",
+            data: post
         });
     } catch (error) {
         res.status(400).json({

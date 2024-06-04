@@ -23,4 +23,13 @@ const getPostsById = async (serviceId) => {
     }
 }
 
-module.exports = { createPost, getPostsById };
+const deletePost = async (postId) => {
+    try {
+        const post = await Post.findByIdAndDelete(postId);
+        return post;
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { createPost, getPostsById, deletePost };
